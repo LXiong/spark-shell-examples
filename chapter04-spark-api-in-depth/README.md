@@ -27,3 +27,25 @@ Based on the previous program, find the number of distinct buyers.
 ## 03-num-purchases-per-client
 Based on the previous program, find the number of purchases made by each client.
 And the client who bought the greatest number of products.
+
+## 04-find-customer-transactions
+Based on the previous program, find the transactions for a particular customer id.
+
+## 05-apply-discount-to-specific-products
+Based on the previous program, apply a 5% discount to orders with 2 or more products with productID = 25 (Barbie Shopping Mall).
+
+## 06-add-complimentary-products
+Based on the previous program, add a complimentary product with productID = 70 to all customers who bought 5 or more ProductID = 81 products.
+
+## 07-find-customer-who-spent-more-overall-reducekey
+Based on the previous program, find the customerID of the customer who spent the most overall using `reduceByKey`.
+
+## 08-find-customer-who-spent-more-overall-foldbykey
+Based on the previous program, find the customerID of the customer who spent the most overall using `foldByKey`.
+
+## 09-add-complementary-gifts
+Based on the previous program, add:
+  + Include a complementary productID 4 to the client who bought the greatest number of products
+  + Include a complementary productID 63 to the client who spent the most
+
+This exemplifies how to add entries to an existing RDD.

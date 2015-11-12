@@ -6,10 +6,7 @@ val trxByCust = trxFieldsData.map(trxFields => (trxFields(2), trxFields))
 /*
     Obtain the number of purchases per client
 */
-trxByCust.countByKey
+val customerTrx = trxByCust.lookup("53")
 
-trxByCust.countByKey.map(_._2).sum
-
-// Now it's easy to find the customer who bought the greatest number of products
-val trxByCustSortedByNumPurchases = trxByCust.countByKey.toSeq.sortBy(_._2)
-val (custID, numPurchases) = trxByCustSortedByNumPurchases.last
+/* pretty print the results */
+customerTrx.foreach(t => println(t.mkString(", ")))

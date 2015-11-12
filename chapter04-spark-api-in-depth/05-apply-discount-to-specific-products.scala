@@ -4,12 +4,11 @@ val trxFieldsData = trxFileLines.map(_.split("#"))
 val trxByCust = trxFieldsData.map(trxFields => (trxFields(2), trxFields))
 
 /*
-    Obtain the number of purchases per client
+    Apply 5% discount to purchases with 2 or more productID=25
 */
-trxByCust.countByKey
-
-trxByCust.countByKey.map(_._2).sum
-
-// Now it's easy to find the customer who bought the greatest number of products
-val trxByCustSortedByNumPurchases = trxByCust.countByKey.toSeq.sortBy(_._2)
-val (custID, numPurchases) = trxByCustSortedByNumPurchases.last
+val trxByCustWithDiscount = trxByCust.mapValues(trxFields => {
+  if(trxFields(3).toInt == 25 && trxFields(4).toInt >= 2) {
+    trxFields(5) = (trxFields(5).toDouble * 0.95).toString
+  }
+  trxFields
+})

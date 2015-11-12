@@ -4,12 +4,10 @@ val trxFieldsData = trxFileLines.map(_.split("#"))
 val trxByCust = trxFieldsData.map(trxFields => (trxFields(2), trxFields))
 
 /*
-    Obtain the number of purchases per client
+    Find the customerID for the customer who spent most overall
 */
-trxByCust.countByKey
+val amountSpentByTrx = trxByCust.mapValues(trx => trx(5).toDouble)
+val amountSpentByCust = amountSpentByTrx.foldByKey(0)((amt1, amt2) => amt1 + amt2)
+amountSpentByCust.collect
 
-trxByCust.countByKey.map(_._2).sum
-
-// Now it's easy to find the customer who bought the greatest number of products
-val trxByCustSortedByNumPurchases = trxByCust.countByKey.toSeq.sortBy(_._2)
-val (custID, numPurchases) = trxByCustSortedByNumPurchases.last
+amountSpentByCust.collect.toSeq.sortBy(_._2).last
