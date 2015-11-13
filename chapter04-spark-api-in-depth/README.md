@@ -49,3 +49,9 @@ Based on the previous program, add:
   + Include a complementary productID 63 to the client who spent the most
 
 This exemplifies how to add entries to an existing RDD.
+
+## 10-find-customer-products-map
+Based on the same scenario, build a map or {custID, list of products purchased}.
+
+## 11-glom
+Illustrates the `glom` transformation.
