@@ -55,3 +55,46 @@ Based on the same scenario, build a map or {custID, list of products purchased}.
 
 ## 11-glom
 Illustrates the `glom` transformation.
+
+## 12-trans-by-prod
+Illustrates how to build a pair RDD whose tuple key is the productID and the value is the transaction. This is built both from scratch reading the file and also by re-mapping the `trxByCust` pair RDD.
+
+## 13-totals-by-prod
+Illustrate how to find the total sold by productID, that is, a pairRDD whose tuple key is the productID and the value is the sum of all the transactions for that product.
+
+## 14-products
+Given the products data file `ch04_data_products.txt`, build a pair RDD consisting of:
+```
+{productID, product-data}
+```
+
+The product file is a delimited file, with each line consisting a single product, and each product field delimited by `#` as in:
+```
+17#LEGO Galaxy Squad#5593.16#4
+```
+
+with the fields being:
+  + the productID: 17
+  + the name of the product: LEGO Galaxy Squad
+  + the unitary price for the product: 5593.16
+  + the ??: 4
+
+## 15-totals-and-products-join
+Illustrate how to obtain the pair RDD resulting of joining the totals by product and the products. As a result, we will end up with a pairRDD (productID, (total, product-attributes))
+
+## 16-products-not-sold-yesterday
+Illustrates how to obtain a pair RDD with the products that were not sold yesterday using a `join` operations, `subtractByKey` and `cogroup`.
+
+## 17-intersection
+Illustrates how to use the `intersection` transformation.
+
+## 18-cartesian
+Illustrates how to use `cartesian` to perform the cartesian product of two RDDs. There are two examples on the file, one that performs the cartesian product of an RDD of characters and another of numbers; and another that performs the cartesian product of two numeric RDDs and then filters the pairs that are divisible.
+
+## 19-zip
+Illustrates how to use the `zip` transformation.
+
+## 20-zip-partitions
+Illustrates how to use the `zipPartitions` transformation.
+
+## 21-totals-by-prod-sortby
