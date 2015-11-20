@@ -98,3 +98,22 @@ Illustrates how to use the `zip` transformation.
 Illustrates how to use the `zipPartitions` transformation.
 
 ## 21-totals-by-prod-sortby
+Illustrates how to use `sortBy`.
+
+## 22-order-employees-by-lastname
+Illustrates how to use `sortByKey` on RDDs with complex keys based on classes.
+
+## 23-statistics
+Illustrates how to use `combineByKey` transformation to obtain statistics on the *transactions by customer* RDD. It is computed the min, max, total quantity and average per customer.
+
+## 24-rdd-lineage
+Illustrates the use of `toDebugString` to display the RDD lineage of a Spark job. The program creates a list of numbers and apply several transformations that work inside and across partitions to obtain the two types of dependencies (narrow and shuffle).
+
+## 25-accumulators
+Illustrates how to create, update and interrogate accumulators.
+
+## 26-custom-accumulable
+Illustrates how to create, update and interrogate an `accumulable`. In the example, the mean of an RDD of Integer is computed.
+
+## 27-accumulable-collections
+Illustrates how to create, update and interrogate an `accumulableCollection`. In the example, the collection is used to collect all the elements of an RDD.

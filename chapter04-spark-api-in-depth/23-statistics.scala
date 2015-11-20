@@ -16,14 +16,32 @@ val products = productsFieldsData.map(productFieldsItem => (productFieldsItem(0)
 val productTotalsAndAttributes = totalsByProduct.join(products);
 
 /*
-  Sort the totalsByProduct pair RDD
+  S
 */
-val totalsByProductSorted = totalsByProduct.sortBy(_._2)
-totalsByProductSorted.collect
+import scala.math.{min, max}
 
-/*
-  Sort the productTotalsAndAttributes by amount
-  (It's an RDD[(String, (Double, Array[String]))]
-*/
-var productTotalsAndAttributesSortedByAmt = productTotalsAndAttributes.sortBy(_._2._1)
-productTotalsAndAttributesSortedByAmt.collect
+def createCombiner = (t: Array[String]) => {
+  val total = t(5).toDouble
+  val qty = t(4).toInt
+  (total/qty, total/qty, qty, total)
+}
+
+def mergeValue : ((Double, Double, Int, Double), Array[String]) => (Double, Double, Int, Double) = {
+  case((mn, mx, qty, tot), t) => {
+    val total = t(5).toDouble
+    val q = t(4).toInt
+    (min(mn, total/q), max(mx, total/q), qty+q, tot+total)
+  }
+}
+
+def mergeCombiner : ((Double, Double, Int, Double), (Double, Double, Int, Double)) => (Double, Double, Int, Double) = {
+  case ((mn1, mx1, q1, tot1), (mn2, mx2, q2, tot2)) => (min(mn1, mn2), max(mx1, mx2), q1+q2, tot1+tot2)
+}
+
+val avgByCust = trxByCust.combineByKey(createCombiner,
+    mergeValue,
+    mergeCombiner,
+    new org.apache.spark.HashPartitioner(trxByCust.partitions.size)
+  ).mapValues({case(mn, mx, qty, tot) => (mn, mx, qty, tot, tot/qty)})
+
+avgByCust.first
