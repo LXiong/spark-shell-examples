@@ -118,3 +118,104 @@ def iterateLRwSGD(iterNums:Array[Int], stepSizes:Array[Double], train:RDD[Labele
 }
 
 iterateLRwSGD(Array(200, 400), Array(0.4, 0.5, 0.6, 0.7, 0.9, 1.0, 1.1, 1.2, 1.3, 1.5), trainHPScaled, testHPScaled)
+
+/*
+  Overfitting: let's check with a higher number of iterations
+*/
+iterateLRwSGD(Array(10000,15000, 30000, 50000), Array(1.1), trainHPScaled, testHPScaled)
+
+/*
+  Avoiding overfitting using Lasso regression
+*/
+import org.apache.spark.mllib.regression.LassoWithSGD
+def iterateLasso(iterNums:Array[Int], stepSizes:Array[Double], regParam:Double, train:RDD[LabeledPoint], test:RDD[LabeledPoint]) = {
+  for(numIter <- iterNums; step <- stepSizes) {
+    val alg = new LassoWithSGD()
+    alg.setIntercept(true).optimizer.setNumIterations(numIter).setStepSize(step).setRegParam(regParam)
+    val model = alg.run(train)
+    val rescaledPredicts = train.map(x => (model.predict(x.features), x.label))
+    val testPredicts = test.map(x => (model.predict(x.features), x.label))
+    val meanSquared = math.sqrt(rescaledPredicts.map({case(p,1) => math.pow(p-1,2)}).mean())
+    val meanSquaredTest = math.sqrt(testPredicts.map({case(p,1) => math.pow(p-1,2)}).mean())
+    println("%d, %5.3f -> %.4f, %.4f".format(numIter, step, meanSquared, meanSquaredTest))
+    println("\tweights: "+model.weights)
+  }
+}
+
+// this crashes
+iterateLasso(Array(200, 400, 1000, 3000, 6000, 10000, 50000, 200000, 300000), Array(1.1), 0.01, trainHPScaled, testHPScaled)
+
+/*
+  Avoiding overfitting using Ridge regression
+*/
+import org.apache.spark.mllib.regression.RidgeRegressionWithSGD
+def iterateRidge(iterNums:Array[Int], stepSizes:Array[Double], regParam:Double, train:RDD[LabeledPoint], test:RDD[LabeledPoint]) = {
+  for(numIter <- iterNums; step <- stepSizes)
+  {
+    val alg = new RidgeRegressionWithSGD()
+    alg.setIntercept(true)
+    alg.optimizer.setNumIterations(numIter).setRegParam(regParam).setStepSize(step)
+    val model = alg.run(train)
+    val rescaledPredicts = train.map(x => (model.predict(x.features), x.label))
+    val testPredicts = test.map(x => (model.predict(x.features), x.label))
+    val meanSquared = math.sqrt(rescaledPredicts.map({case(p,l) => math.pow(p-l,2)}).mean())
+    val meanSquaredTest = math.sqrt(testPredicts.map({case(p,l) => math.pow(p-l,2)}).mean())
+    println("%d, %5.3f -> %.4f, %.4f".format(numIter, step, meanSquared, meanSquaredTest))
+  }
+}
+
+/* this works OK */
+iterateRidge(Array(200, 400, 1000, 3000, 6000, 10000, 50000, 200000, 300000), Array(1.1), 0.01, trainHPScaled, testHPScaled)
+
+/*
+  Using mini-batch stochastic gradient descent
+*/
+def iterateLRwSGDBatch(iterNums:Array[Int], stepSizes:Array[Double], fractions:Array[Double], train:RDD[LabeledPoint], test:RDD[LabeledPoint]) = {
+  for(numIter <- iterNums; step <- stepSizes; miniBFraction <- fractions) {
+    val alg = new LinearRegressionWithSGD()
+    alg.setIntercept(true).optimizer.setNumIterations(numIter).setStepSize(step)
+    alg.optimizer.setMiniBatchFraction(miniBFraction)
+    val model = alg.run(train)
+    val rescaledPredicts = train.map(x => (model.predict(x.features), x.label))
+    val testPredicts = test.map(x => (model.predict(x.features), x.label))
+    val meanSquared = math.sqrt(rescaledPredicts.map({case(p,l) => math.pow(p-l,2)}).mean())
+    val meanSquaredTest = math.sqrt(testPredicts.map({case(p,l) => math.pow(p-l,2)}).mean())
+    println("%d, %5.3f %5.3f -> %.4f, %.4f".format(numIter, step, miniBFraction, meanSquared, meanSquaredTest))
+  }
+}
+
+/*
+  Using LBFGS
+*/
+import org.apache.spark.mllib.optimization.LBFGS
+import org.apache.spark.mllib.optimization.LeastSquaresGradient
+import org.apache.spark.mllib.optimization.SquaredL2Updater
+import org.apache.spark.mllib.regression.LinearRegressionModel
+import org.apache.spark.mllib.util.MLUtils
+def iterateLBFGS(regParams:Array[Double], numCorrections:Int, tolerance:Double, train:RDD[LabeledPoint], test:RDD[LabeledPoint]) = {
+  val dimnum = train.first().features.size
+  for(regParam <- regParams)
+  {
+    val (weights:Vector, loss:Array[Double]) = LBFGS.runLBFGS(
+      train.map(x => (x.label, MLUtils.appendBias(x.features))),
+      new LeastSquaresGradient(),
+      new SquaredL2Updater(),
+      numCorrections,
+      tolerance,
+      50000,
+      regParam,
+      Vectors.zeros(dimnum+1))
+
+    val model = new LinearRegressionModel(
+      Vectors.dense(weights.toArray.slice(0, weights.size - 1)),
+      weights(weights.size - 1))
+
+    val trainPredicts = train.map(x => (model.predict(x.features), x.label))
+    val testPredicts = test.map(x => (model.predict(x.features), x.label))
+    val meanSquared = math.sqrt(trainPredicts.map({case(p,l) => math.pow(p-l,2)}).mean())
+    val meanSquaredTest = math.sqrt(testPredicts.map({case(p,l) => math.pow(p-l,2)}).mean())
+    println("%5.3f, %d -> %.4f, %.4f".format(regParam, numCorrections, meanSquared, meanSquaredTest))
+  }
+}
+
+iterateLBFGS(Array(0.005, 0.007, 0.01, 0.02, 0.03, 0.05, 0.1), 10, 1e-5, trainHPScaled, testHPScaled)
