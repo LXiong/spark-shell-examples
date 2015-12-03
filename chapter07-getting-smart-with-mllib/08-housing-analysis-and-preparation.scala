@@ -93,7 +93,7 @@ val testPredictions = testScaled.map(x => (model.predict(x.features), x.label))
 testPredictions.collect
 
 // compute the root mean squared error
-math.sqrt(testPredictions.map{case(p,l) => math.pow(p - 1 , 2)}.mean)
+val RMSE = math.sqrt(testPredicts.map{case(p,1) => math.pow(p-1,2)}.mean())
 
 /*
   Step 9: Evaluating the model's performance with RegressionMetrics
