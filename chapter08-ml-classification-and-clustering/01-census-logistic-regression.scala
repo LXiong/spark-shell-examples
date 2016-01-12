@@ -166,3 +166,14 @@ import org.apache.spark.ml.tuning.ParamGridBuilder
 val paramGrid = new ParamGridBuilder().addGrid(lr.maxIter, Array(1000)).addGrid(lr.regParam, Array(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5)).build()
 
 cv.setEstimatorParamMaps(paramGrid)
+
+val cvmodel = cv.fit(adultTrain)
+
+// obtain the weights of the best logistic regression model
+cvmodel.bestModel.asInstanceOf[LogisticRegressionModel].weights
+
+// obtain the selected regularization parameter
+cvmodel.bestModel.parent.asInstanceOf[LogisticRegression].getRegParam
+
+// Evaluating the performance of the best model
+new BinaryClassificationEvaluator().evaluate(cvmodel.bestModel.transform(adultTest))
