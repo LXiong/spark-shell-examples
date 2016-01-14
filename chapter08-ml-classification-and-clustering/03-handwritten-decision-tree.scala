@@ -79,3 +79,30 @@ import org.apache.spark.ml.Pipeline
 val pipeline = new Pipeline().setStages(Array(labelIndexer, featureIndexer, dt, labelConverter))
 
 val model = pipeline.fit(pendtTrain)
+
+// Cast to a DecisionTreeClassificationModel to obtain metrics and tree information
+import org.apache.spark.ml.classification.DecisionTreeClassificationModel
+val dtModel = model.stages(2).asInstanceOf[DecisionTreeClassificationModel]
+dtModel.rootNode
+
+dtModel.toDebugString
+
+// Construct the predictions
+val predictions = model.transform(pendtTest)
+predictions.select("predictedLabel", "label", "features").show(5)
+
+// Evaluate
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
+val evaluator = new MulticlassClassificationEvaluator().setLabelCol("indexedLabel").setPredictionCol("prediction").setMetricName("precision")
+val precision = evaluator.evaluate(predictions)
+precision
+
+val penPreds = predictions.select("prediction", "indexedLabel").map(row => (row.getDouble(0), row.getDouble(1)))
+
+// Construct the MulticlassMetrics object
+import org.apache.spark.mllib.evaluation.MulticlassMetrics
+val penmm = new MulticlassMetrics(penPreds)
+
+// Obtaining the confusion matrix
+// (i,j) = number of elements from the i class that were classified as j class
+penmm.confusionMatrix
