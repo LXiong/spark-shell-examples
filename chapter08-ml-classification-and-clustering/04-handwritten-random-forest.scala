@@ -78,7 +78,7 @@ val pipeline = new Pipeline().setStages(Array(labelIndexer, featureIndexer, rf, 
 // Train the model
 val model = pipeline.fit(pendtTrain)
 
-// Cast to a DecisionTreeClassificationModel to obtain metrics and tree information
+// Cast to a RandomForestClassificationModel to obtain metrics and tree information
 import org.apache.spark.ml.classification.RandomForestClassificationModel
 val rfModel = model.stages(2).asInstanceOf[RandomForestClassificationModel]
 rfModel.trees
