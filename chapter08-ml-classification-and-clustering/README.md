@@ -17,3 +17,6 @@ Note that the book's original listing (as of today, MEAPv06) does not work on my
 ## 04-handwritten-random-forest
 Illustrate how to construct a *Random Forest* on a dataset consisting in information from writers using a pen to draw digits from 0 to 9.
 Note that the book's original listing (as of today, MEAPv06) does not work on my current version of Spark, so i've had to modify it browsing Spark's documentation for ML Decision Trees on: https://spark.apache.org/docs/1.5.0/ml-ensembles.html#random-forests
+
+## 05-handwritten-kmeans-clustering
+Illustrates how to perform clustering on Spark using a dataset consisting in information from writers using a pen to draw digits from 0 to 9. It is used the the *K-Means Clustering* algorithm to perform the clustering of the information on the dataset.
