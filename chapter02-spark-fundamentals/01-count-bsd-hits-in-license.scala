@@ -1,3 +1,7 @@
+/*
+  Count the number of lines in Spark's License file with the word BSD on them
+*/
+
 /* I assume you've started the shell from $SPARK_HOME */
 val pathToLicense = "LICENSE"
 
