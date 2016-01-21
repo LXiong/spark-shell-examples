@@ -1,7 +1,14 @@
-Spark in Action: Shell programs
-===============================
+# Spark in Action Examples: Chapter 4 &mdash; Spark API in depth
+> Scala examples for Spark shell
 
-# Chapter 4: Spark API in depth
+## 00-scala-implicit-conversion
+Illustrates Scala's implicit conversion, which is heavily used by Spark.
+
+In the example, we create a parameterized class `ClassOne[T](val input: T)`, and two unrelated classes `ClassOneStr` and `ClassOneInt` which provides respectively the methods `duplicateString` and `duplicateInt`.
+
+Then, we define to implicit methods that Scala will use to perform automatic conversion from `ClassOne` objects to `ClassOneStr` or `ClassOneInt` depending on the parameter type passed to `ClassOne` constructor. Those methods will allow us to magically use the methods defined on `ClassOneInt` for `ClassOne[Int]` objects, and the methods defined on `ClassOneStr` for `ClassOne[String]` objects, even when those three classes are completely unrelated!!
+
+This fact will make it easier to code Spark examples on Scala than in Java, as the runtime will be automatically converting, for example, RDDs into PairRDDs when needed.
 
 ## 01-trans-by-cust
 Given the yesterday's transactions file `ch04_data_transactions.txt` create a Pair RDD consisting of:
@@ -117,3 +124,14 @@ Illustrates how to create, update and interrogate an `accumulable`. In the examp
 
 ## 27-accumulable-collections
 Illustrates how to create, update and interrogate an `accumulableCollection`. In the example, the collection is used to collect all the elements of an RDD.
+
+## e01-pair-rdd
+Demonstrates how to use `PairRDD` methods with very simple examples. The following methods are illustrated:
++ `keys`
++ `countByKey`
++ `lookup`
++ `mapValues`
++ `flatMapValues`
++ `reduceByKey`
++ `foldByKey`
++ `aggregateByKey`
