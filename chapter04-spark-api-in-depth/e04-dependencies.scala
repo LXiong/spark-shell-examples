@@ -7,7 +7,13 @@ val listRDD = sc.parallelize(list, 5)
 val pairsRDD = listRDD.map(x => (x, x * x))
 pairsRDD.collect
 
-/* Step 3: Wide dependency (suffling required) */
+/*
+  Step 3: Wide dependency (suffling required)
+
+  Shuffling operations are expensive, because results must be saved to disk, and also
+  data must be sent over the network.
+
+*/
 val reducedRDD = pairsRDD.reduceByKey((val1, val2) => val1 + val2)
 reducedRDD.collect
 reducedRDD.partitions.size
