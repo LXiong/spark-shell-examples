@@ -135,3 +135,22 @@ Demonstrates how to use `PairRDD` methods with very simple examples. The followi
 + `reduceByKey`
 + `foldByKey`
 + `aggregateByKey`
+
+## e02-data-partitioning
+Demonstrates several concepts related to partitioning and shuffling. In particular:
++ `partitions.size` &mdash; returns the number of partitions in an RDD
++ `glom` &mdash; returns an array with the contents of each partition
+
+While the concept of shuffling is very clear (the need to merge data between partitions after a transformation), there is no clear way to show it with a code sample.
+
+## e03-joining-data
+Demonstrates how to perform different join operations with very simple examples. The following methods are illustrated:
++ `join` &mdash; only elements present in both RDDs will be present in the resulting RDD
++ `leftOuterJoin` &mdash; only elements present in the left RDD will be present in the resulting RDD
++ `rightOuterJoin` &mdash; only elements present in the right RDD will be present in the resulting RDD
++ `fullOuterJoin` &mdash; elements from both RDDs will be present
+
+Additionally it is illustrated `subtractByKey`
+
+## e04-dependencies.scala
+The same example as [24-rdd-lineage](### 24-rdd-lineage) but with additional comments. It illustrates the different types of dependencies you may find while transforming RDDs.
