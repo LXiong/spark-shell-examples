@@ -22,3 +22,21 @@ Illustrates how to use SQL functions:
 + Aggregate functions
 + Window functions
 + User-Defined functions
+
+## 04-handling-missing-values
+Illustrates how to handle *nulls* and *NaN* values found in a DataFrame. Specifically, `drop`, `fill` and `replace` are used.
+
+## 05-create-rdd-from-df
+Demonstrates how to convert an RDD to a DataFrame after having performed a map operation.
+
+## 06-df-grouping
+Illustrates how to group *DataFrame* data using `groupBy`, `rollup` and `cube`.
+
+## 07-df-joining
+Illustrates how to perform join operations on *DataFrames* using `join`.
+
+## 08-df-sql-commands
+Illustrates how to perform SQL operations on *DataFrames* using SQL.
+
+## 09-df-saving-data
+Illustrates how to save DataFrames to file, and how to configure the writer.
